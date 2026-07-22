@@ -124,10 +124,10 @@ class DMCv2(HighLevelAnalyzer):
     }
 
     def reset(self):
-        buffer.clear()
-        state            = DMCv2ReadState.Wait_F
-        frame_start_time = None
-        frame_end_time   = None
+        self.buffer.clear()
+        self.state            = DMCv2ReadState.Wait_F
+        self.frame_start_time = None
+        self.frame_end_time   = None
 
     def __init__(self):
         self.state            = DMCv2ReadState.Wait_D

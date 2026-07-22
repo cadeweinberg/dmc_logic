@@ -63,13 +63,7 @@ class DMCv2Type(Enum):
 
 # High level analyzers must subclass the HighLevelAnalyzer class.
 class DMCv2(HighLevelAnalyzer):
-    state            = DMCv2ReadState.Wait_D
-    buffer           = array('B') # array of unsigned char
-    length           = 0
-    frame_start_time = None
-    frame_end_time   = None
-
-    # List of settings that a user can set for this High Level Analyzer.
+        # List of settings that a user can set for this High Level Analyzer.
     search_for = StringSetting() 
 
     dmc_header               = "<2BIH"
@@ -136,7 +130,11 @@ class DMCv2(HighLevelAnalyzer):
         frame_end_time   = None
 
     def __init__(self):
-        pass 
+        self.state            = DMCv2ReadState.Wait_D
+        self.buffer           = array('B') # array of unsigned char
+        self.length           = 0
+        self.frame_start_time = None
+        self.frame_end_time   = None 
 
     # print out the different kinds of packet
     def handle(self):

@@ -138,8 +138,8 @@ class DMCv2(HighLevelAnalyzer):
 
     # print out the different kinds of packet
     def handle(self):
-        header = unpack(dmc_header, buffer)
-        return AnalyzerFrame('dmc_header', frame_start_time, frame_end_time, {
+        header = unpack(dmc_header, self.buffer)
+        return AnalyzerFrame('dmc_header', self.frame_start_time, self.frame_end_time, {
             'marker_D': header[0],
             'marker_F': header[1],
             'id':       header[2],
@@ -149,17 +149,17 @@ class DMCv2(HighLevelAnalyzer):
 
     def decode(self, frame: AnalyzerFrame):
         b = frame.data['data']
-        match state:
+        match self.state:
             case DMCv2ReadState.Wait_D:
                 try:
                     c = b.decode('ascii')
 
                     if c == 'D':
-                        buffer.append(c)
-                        state            = DMCv2ReadState.Wait_F
-                        frame_start_time = frame.start_time
+                        self.buffer.append(c)
+                        self.state            = DMCv2ReadState.Wait_F
+                        self.frame_start_time = frame.start_time
                 except:
-                    reset()
+                    self.reset()
                     return
 
             case DMCv2ReadState.Wait_F:
@@ -167,40 +167,40 @@ class DMCv2(HighLevelAnalyzer):
                     c = d.decode('ascii')
 
                     if c == 'F':
-                        buffer.append(c)
-                        state = DMCv2ReadState.ReadHeader
+                        self.buffer.append(c)
+                        self.state = DMCv2ReadState.ReadHeader
                         return
                     elif c == 'D':
                         return
                 except:
-                    reset()
+                    self.reset()
                     return
-                reset()
+                self.reset()
                 return
 
             case DMCv2ReadState.ReadHeader:
-                buffer.append(c)
+                self.buffer.append(c)
 
-                if buffer.__len__() == 10:
-                    length = int.from_bytes(buffer[8:9:1], byteorder='little', signed=False)
-                    total  = length + 12
+                if self.buffer.__len__() == 10:
+                    self.length = int.from_bytes(self.buffer[8:9:1], byteorder='little', signed=False)
+                    total  = self.length + 12
 
                     if total >= 2048:
                         reset()
                         return
 
-                    state = DMCv2ReadState.ReadPayload
-                    length = total
+                    self.state = DMCv2ReadState.ReadPayload
+                    self.length = total
 
             case DMCv2ReadState.ReadPayload:
-                buffer.append(c)
+                self.buffer.append(c)
 
-                if buffer.__len__() < length:
+                if self.buffer.__len__() < self.length:
                     return
                 # we are here, that means we can print out the packet contents 
-                frame_end_time = frame.end_time
-                reset()
-                return handle()
+                self.frame_end_time = frame.end_time
+                self.reset()
+                return self.handle()
 
 
 

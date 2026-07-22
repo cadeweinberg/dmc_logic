@@ -1,0 +1,13 @@
+{
+  "name": "DMCv2",
+  "apiVersion": "1.0.0",
+  "author": "Cade Weinberg",
+  "version": "0.0.1",
+  "description": "A Visualizer for the Dragonframe binary DMC v2 Protocol.",
+  "extensions": {
+    "DMCv2": {
+      "type": "HighLevelAnalyzer",
+      "entryPoint": "HighLevelAnalyzer.DMCv2"
+    }
+  }
+}

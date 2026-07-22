@@ -142,10 +142,10 @@ class DMCv2(HighLevelAnalyzer):
     def handle(self):
         header = unpack(dmc_header, buffer)
         return AnalyzerFrame('dmc_header', frame_start_time, frame_end_time, {
-            'marker_D': header[0]
-            'marker_F': header[1]
-            'id':       header[2]
-            'type':     header[3]
+            'marker_D': header[0],
+            'marker_F': header[1],
+            'id':       header[2],
+            'type':     header[3],
             'length':   header[4]
         })
 
